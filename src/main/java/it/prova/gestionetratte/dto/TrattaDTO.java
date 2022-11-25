@@ -35,7 +35,7 @@ public class TrattaDTO {
 	@NotNull(message = "{oraAtterraggio.notnull}")
 	private LocalTime oraAtterraggio;
 
-	@NotBlank(message = "{stato.notblank}")
+	@NotBlank(message = "{stato.notnull}")
 	private Stato stato;
 
 	@JsonIgnoreProperties(value = { "tratte" })
