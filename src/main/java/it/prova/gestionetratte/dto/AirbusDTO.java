@@ -40,10 +40,8 @@ public class AirbusDTO {
 
 	}
 
-	public AirbusDTO(Long id, @NotBlank(message = "{codice.notblank}") String codice,
-			@NotBlank(message = "{descrizione.notblank}") String descrizione,
-			@NotNull(message = "{dataInizioServizio.notnull}") LocalDate dataInizioServizio,
-			@NotBlank(message = "{numeroPasseggeri.notblank}") Integer numeroPasseggeri) {
+	public AirbusDTO(Long id, String codice, String descrizione, LocalDate dataInizioServizio,
+			Integer numeroPasseggeri) {
 		super();
 		this.id = id;
 		this.codice = codice;
@@ -103,18 +101,19 @@ public class AirbusDTO {
 	public Airbus buildAirbusModel() {
 		return new Airbus(this.id, this.codice, this.descrizione, this.dataInizioServizio, this.numeroPasseggeri);
 	}
-	
+
 	public static AirbusDTO buildAirbusDTOFromModel(Airbus airbusModel, boolean includeTratte) {
-		AirbusDTO result = new AirbusDTO(airbusModel.getId(), airbusModel.getCodice(), airbusModel.getDescrizione(),airbusModel.getDataInizioServizio(), airbusModel.getNumeroPasseggeri());
-		if(includeTratte)
+		AirbusDTO result = new AirbusDTO(airbusModel.getId(), airbusModel.getCodice(), airbusModel.getDescrizione(),
+				airbusModel.getDataInizioServizio(), airbusModel.getNumeroPasseggeri());
+		if (includeTratte)
 			result.setTratte(TrattaDTO.createTrattaDTOSetFromModelSet(airbusModel.getTratte(), false));
 		return result;
 	}
-	
+
 	public static List<AirbusDTO> createAirbusDTOListFromModelList(List<Airbus> modelListInput, boolean includeTratte) {
 		return modelListInput.stream().map(airbusEntity -> {
-			AirbusDTO result = AirbusDTO.buildAirbusDTOFromModel(airbusEntity,includeTratte);
-			if(includeTratte)
+			AirbusDTO result = AirbusDTO.buildAirbusDTOFromModel(airbusEntity, includeTratte);
+			if (includeTratte)
 				result.setTratte(TrattaDTO.createTrattaDTOSetFromModelSet(airbusEntity.getTratte(), false));
 			return result;
 		}).collect(Collectors.toList());
