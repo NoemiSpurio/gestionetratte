@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.prova.gestionetratte.dto.AirbusDTO;
+import it.prova.gestionetratte.dto.TrattaDTO;
 import it.prova.gestionetratte.model.Airbus;
 import it.prova.gestionetratte.repository.airbus.AirbusRepository;
 import it.prova.gestionetratte.web.api.exception.AirbusConTratteAssociateException;
@@ -67,6 +69,27 @@ public class AirbusServiceImpl implements AirbusService {
 	@Override
 	public List<Airbus> findByExample(Airbus example) {
 		return repository.findByExample(example);
+	}
+
+	@Override
+	public List<AirbusDTO> findListaAirbusEvidenziandoSovrapposizioni() {
+		
+		List<AirbusDTO> listAirbusEager = AirbusDTO.createAirbusDTOListFromModelList(repository.findAllEager(), true);
+		for (AirbusDTO airbusItem : listAirbusEager) {
+			for (TrattaDTO trattaItem : airbusItem.getTratte()) {
+				for (TrattaDTO item : airbusItem.getTratte()) {
+					if ((item.getData().isEqual(trattaItem.getData()) && item.getOraDecollo().isAfter(trattaItem.getOraDecollo())
+							&& item.getOraDecollo().isBefore(trattaItem.getOraAtterraggio()))
+							|| (item.getData().isEqual(trattaItem.getData()) && item.getOraAtterraggio().isAfter(trattaItem.getOraDecollo())
+									&& item.getOraAtterraggio().isBefore(trattaItem.getOraAtterraggio()))) {
+						airbusItem.setConSovrapposizioni(true);
+
+					}
+				}
+			}
+		}
+		
+		return listAirbusEager;
 	}
 
 }
