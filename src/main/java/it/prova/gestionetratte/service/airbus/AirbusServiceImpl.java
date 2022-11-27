@@ -64,4 +64,9 @@ public class AirbusServiceImpl implements AirbusService {
 		repository.deleteById(idToRemove);
 	}
 
+	@Override
+	public List<Airbus> findByExample(Airbus example) {
+		return repository.findByExample(example);
+	}
+
 }

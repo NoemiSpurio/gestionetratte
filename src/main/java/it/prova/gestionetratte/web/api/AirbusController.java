@@ -28,12 +28,12 @@ public class AirbusController {
 
 	@Autowired
 	private AirbusService airbusService;
-	
+
 	@GetMapping
-	public List<AirbusDTO> listAll(){
+	public List<AirbusDTO> listAll() {
 		return AirbusDTO.createAirbusDTOListFromModelList(airbusService.listAllEager(), true);
 	}
-	
+
 	@GetMapping("/{id}")
 	public AirbusDTO findById(@PathVariable(value = "id", required = true) long id) {
 		Airbus airbus = airbusService.caricaSingoloElementoEager(id);
@@ -43,7 +43,7 @@ public class AirbusController {
 
 		return AirbusDTO.buildAirbusDTOFromModel(airbus, true);
 	}
-	
+
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public AirbusDTO createNew(@Valid @RequestBody AirbusDTO airbusInput) {
@@ -53,26 +53,32 @@ public class AirbusController {
 		Airbus airbusInserito = airbusService.inserisciNuovo(airbusInput.buildAirbusModel());
 		return AirbusDTO.buildAirbusDTOFromModel(airbusInserito, false);
 	}
-	
+
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable(required = true) Long id) {
 		airbusService.rimuovi(id);
 	}
-	
+
 	@PutMapping("/{id}")
 	public AirbusDTO update(@Valid @RequestBody AirbusDTO airbusInput, @PathVariable(required = true) Long id) {
-		
+
 		Airbus airbus = airbusService.caricaSingoloElementoEager(id);
-		
+
 		if (airbus == null) {
 			throw new AirbusNotFoundException("Airbus not found con id: " + id);
 		}
-		
+
 		airbusInput.setId(id);
-		
+
 		Airbus airbusAggiornato = airbusService.aggiorna(airbusInput.buildAirbusModel());
-		
+
 		return AirbusDTO.buildAirbusDTOFromModel(airbusAggiornato, false);
+	}
+
+	@PostMapping("/search")
+	public List<AirbusDTO> search(@RequestBody AirbusDTO example) {
+		return AirbusDTO.createAirbusDTOListFromModelList(airbusService.findByExample(example.buildAirbusModel()),
+				false);
 	}
 }
