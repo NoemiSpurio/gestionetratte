@@ -29,7 +29,7 @@ public class AirbusDTO {
 	@NotNull(message = "{dataInizioServizio.notnull}")
 	private LocalDate dataInizioServizio;
 
-	@NotBlank(message = "{numeroPasseggeri.notnull}")
+	@NotNull(message = "{numeroPasseggeri.notnull}")
 	@Min(0)
 	private Integer numeroPasseggeri;
 
