@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import it.prova.gestionetratte.model.Stato;
 import it.prova.gestionetratte.model.Tratta;
 import it.prova.gestionetratte.repository.tratta.TrattaRepository;
+import it.prova.gestionetratte.web.api.exception.RimozioneTrattaNonAnnullataException;
+import it.prova.gestionetratte.web.api.exception.TrattaNotFoundException;
 
 @Service
 public class TrattaServiceImpl implements TrattaService {
@@ -47,8 +50,17 @@ public class TrattaServiceImpl implements TrattaService {
 
 	@Override
 	public void rimuovi(Long idToRemove) {
-		// TODO Auto-generated method stub
+		Tratta trattaToBeRemoved = repository.findById(idToRemove).orElse(null);
+		
+		if (trattaToBeRemoved == null) {
+			throw new TrattaNotFoundException("Tratta not found con id: " + idToRemove);
+		}
+		
+		if (trattaToBeRemoved.getStato() == Stato.ATTIVA || trattaToBeRemoved.getStato() == Stato.CONCLUSA)
+			throw new RimozioneTrattaNonAnnullataException(
+					"Impossibile rimuovere tratta: deve essere prima ANNULLATA.");
 
+		repository.deleteById(idToRemove);
 	}
 
 }
