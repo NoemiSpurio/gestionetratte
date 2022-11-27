@@ -63,4 +63,9 @@ public class TrattaServiceImpl implements TrattaService {
 		repository.deleteById(idToRemove);
 	}
 
+	@Override
+	public List<Tratta> findByExample(Tratta example) {
+		return repository.findByExample(example);
+	}
+
 }

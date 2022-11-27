@@ -30,7 +30,7 @@ public class TrattaController {
 
 	@Autowired
 	private TrattaService trattaService;
-	
+
 	@Autowired
 	private AirbusService airbusService;
 
@@ -68,10 +68,16 @@ public class TrattaController {
 		Tratta trattaInserita = trattaService.inserisciNuovo(trattaInput.buildTrattaModel());
 		return TrattaDTO.buildTrattaDTOFromModel(trattaInserita, true);
 	}
-	
+
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable(required = true) Long id) {
 		trattaService.rimuovi(id);
+	}
+
+	@PostMapping("/search")
+	public List<TrattaDTO> search(@RequestBody TrattaDTO example) {
+		return TrattaDTO.createTrattaDTOListFromModelList(trattaService.findByExample(example.buildTrattaModel()),
+				false);
 	}
 }
