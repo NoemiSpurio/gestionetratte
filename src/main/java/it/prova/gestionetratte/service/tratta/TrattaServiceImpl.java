@@ -1,5 +1,6 @@
 package it.prova.gestionetratte.service.tratta;
 
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,6 +67,19 @@ public class TrattaServiceImpl implements TrattaService {
 	@Override
 	public List<Tratta> findByExample(Tratta example) {
 		return repository.findByExample(example);
+	}
+
+	@Override
+	@Transactional
+	public void concludiTratte() {
+		List<Tratta> tratteAttive = repository.findAllByStatoLike(Stato.ATTIVA);
+
+		if (tratteAttive.size() == 0)
+			return;
+
+		tratteAttive.stream().filter(trattaItem -> LocalTime.now().isAfter(trattaItem.getOraAtterraggio()))
+				.forEach(trattaItem -> trattaItem.setStato(Stato.CONCLUSA));
+		tratteAttive.forEach(trattaItem -> repository.save(trattaItem));
 	}
 
 }
