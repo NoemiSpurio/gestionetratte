@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,9 +47,15 @@ public class AirbusController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public AirbusDTO createNew(@Valid @RequestBody AirbusDTO airbusInput) {
 		if (airbusInput.getId() != null)
-			throw new IdNotNullForInsertException("Non è ammesso fornire un id per la creazione");
+			throw new IdNotNullForInsertException("Non puoi inserire airbus con id associati");
 
 		Airbus airbusInserito = airbusService.inserisciNuovo(airbusInput.buildAirbusModel());
 		return AirbusDTO.buildAirbusDTOFromModel(airbusInserito, false);
+	}
+	
+	@DeleteMapping("/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void delete(@PathVariable(required = true) Long id) {
+		airbusService.rimuovi(id);
 	}
 }

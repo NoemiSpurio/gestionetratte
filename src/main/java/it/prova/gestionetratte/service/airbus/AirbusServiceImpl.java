@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import it.prova.gestionetratte.model.Airbus;
 import it.prova.gestionetratte.repository.airbus.AirbusRepository;
+import it.prova.gestionetratte.web.api.exception.AirbusConTratteAssociateException;
+import it.prova.gestionetratte.web.api.exception.AirbusNotFoundException;
 
 @Service
 public class AirbusServiceImpl implements AirbusService {
@@ -48,9 +50,18 @@ public class AirbusServiceImpl implements AirbusService {
 	}
 
 	@Override
+	@Transactional
 	public void rimuovi(Long idToRemove) {
-		// TODO Auto-generated method stub
+		Airbus airbusToBeRemoved = repository.findByIdEager(idToRemove);
 
+		if (airbusToBeRemoved == null)
+			throw new AirbusNotFoundException("Airbus not found con id: " + idToRemove);
+
+		if (airbusToBeRemoved.getTratte().size() > 0)
+			throw new AirbusConTratteAssociateException(
+					"Impossibile eliminare airbus: sono ancora presenti tratte associate.");
+
+		repository.deleteById(idToRemove);
 	}
 
 }
