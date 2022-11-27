@@ -4,11 +4,14 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.prova.gestionetratte.dto.TrattaDTO;
+import it.prova.gestionetratte.model.Tratta;
 import it.prova.gestionetratte.service.tratta.TrattaService;
+import it.prova.gestionetratte.web.api.exception.TrattaNotFoundException;
 
 @RestController
 @RequestMapping("api/tratta")
@@ -22,5 +25,13 @@ public class TrattaController {
 		return TrattaDTO.createTrattaDTOListFromModelList(trattaService.listAll(true), true);
 	}
 	
-	
+	@GetMapping("/{id}")
+	public TrattaDTO findById(@PathVariable(value = "id", required = true) long id) {
+		Tratta tratta = trattaService.caricaSingoloElementoEager(id);
+
+		if (tratta == null)
+			throw new TrattaNotFoundException("Tratta not found con id: " + id);
+
+		return TrattaDTO.buildTrattaDTOFromModel(tratta, true);
+	}
 }
